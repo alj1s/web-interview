@@ -4,9 +4,17 @@ import PropTypes from 'prop-types'
 function User(props) {
   return (
     <div className="user">
-      <img src={props.avatar} alt={`${props.lastName} `} />
-      {props.firstName} {props.lastName}
-      <button className="linkButton">Change</button>
+      <div className="user-details">
+        <img
+          className="user-avatar"
+          src={props.avatar}
+          alt={`${props.firstName} ${props.lastName} avatar`}
+        />
+        <span className="user-name">
+          {props.firstName} {props.lastName}
+        </span>
+      </div>
+      <button className="change-user-button">Change</button>
     </div>
   )
 }

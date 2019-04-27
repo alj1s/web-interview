@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 
-import logo from './logo.png'
 import { API_ENDPOINT } from './config'
-import { User } from './components'
+import { Header, SelectButton, User } from './components'
 
 import './App.scss'
 
@@ -42,10 +41,12 @@ class App extends Component {
       .then(res => res.json())
       .then(json => {
         this.allAvailableSlots = json
+        const availableSlots = this.calculateAvailableSlots(
+          this.state.selectedConsultantType
+        )
         this.setState({
-          availableSlots: this.calculateAvailableSlots(
-            this.state.selectedConsultantType
-          ),
+          availableSlots,
+          selectedAppointmentTime: availableSlots[0],
         })
       })
       .catch(() => {
@@ -59,6 +60,7 @@ class App extends Component {
         slot.consultantType.includes(consultantType.toLowerCase())
       )
       .map(slot => slot.time)
+      .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
 
   bookAppointment = () => {
     fetch(`${API_ENDPOINT}/appointments`, {
@@ -91,81 +93,91 @@ class App extends Component {
     const { firstName, lastName, avatar } = this.state.currentUser
 
     return (
-      <main className="app">
-        <header className="app-header">
-          <img src={logo} className="app-logo" alt="Babylon Health" />
-        </header>
+      <div className="app">
+        <Header />
 
-        <h1>New appointment</h1>
+        <main>
+          <h1>New appointment</h1>
 
-        <User firstName={firstName} lastName={lastName} avatar={avatar} />
+          <User firstName={firstName} lastName={lastName} avatar={avatar} />
 
-        <section>
-          <h2>Consultant Type</h2>
-          {consultantTypes.map(consultantType => (
-            <button
-              key={consultantType}
-              className="button"
-              onClick={() =>
-                this.setState({
-                  selectedConsultantType: consultantType,
-                  availableSlots: this.calculateAvailableSlots(consultantType),
-                })
+          <section>
+            <h2>Consultant Type</h2>
+            {consultantTypes.map(consultantType => (
+              <SelectButton
+                key={consultantType}
+                isSelected={
+                  this.state.selectedConsultantType === consultantType
+                }
+                onSelect={() =>
+                  this.setState({
+                    selectedConsultantType: consultantType,
+                    availableSlots: this.calculateAvailableSlots(
+                      consultantType
+                    ),
+                  })
+                }
+              >
+                {consultantType}
+              </SelectButton>
+            ))}
+          </section>
+
+          <section>
+            <h2>Date & Time</h2>
+            {this.state.availableSlots.map(slot => (
+              <SelectButton
+                key={slot}
+                isSelected={this.state.selectedAppointmentTime === slot}
+                onSelect={() => {
+                  this.setState({ selectedAppointmentTime: slot })
+                }}
+              >
+                {slot}
+              </SelectButton>
+            ))}
+          </section>
+
+          <section>
+            <h2>Appointment type</h2>
+            {appointmentTypes.map(appointmentType => (
+              <SelectButton
+                key={appointmentType}
+                isSelected={
+                  this.state.selectedAppointmentType === appointmentType
+                }
+                onSelect={() =>
+                  this.setState({ selectedAppointmentType: appointmentType })
+                }
+              >
+                {appointmentType}
+              </SelectButton>
+            ))}
+          </section>
+
+          <section>
+            <h2>Notes</h2>
+            <textarea
+              value={this.state.appointmentNotes}
+              placeholder="Describe your symptoms"
+              onChange={e =>
+                this.setState({ appointmentNotes: e.target.value })
               }
-            >
-              {consultantType}
-            </button>
-          ))}
-        </section>
+            />
+          </section>
 
-        <section>
-          <h2>Date & Time</h2>
-          {this.state.availableSlots.map(slot => (
-            <button
-              key={slot}
-              className="button"
-              onClick={() => {
-                this.setState({ selectedAppointmentTime: slot })
-              }}
-            >
-              {slot}
-            </button>
-          ))}
-        </section>
-
-        <section>
-          <h2>Appointment type</h2>
-          {appointmentTypes.map(appointmentType => (
-            <button
-              key={appointmentType}
-              className="button"
-              onClick={() =>
-                this.setState({ selectedAppointmentType: appointmentType })
-              }
-            >
-              {appointmentType}
-            </button>
-          ))}
-        </section>
-
-        <section>
-          <h2>Notes</h2>
-          <textarea
-            value={this.state.appointmentNotes}
-            placeholder="Describe your symptoms"
-            onChange={e => this.setState({ appointmentNotes: e.target.value })}
-          />
-        </section>
-
-        <section>
-          <h2>Attach a photo</h2>
-          <button className="button">+</button>
-        </section>
-
-        <button className="button" onClick={() => this.bookAppointment()}>
+          <section>
+            <h2>Attach a photo</h2>
+            <button className="button">+</button>
+          </section>
+        </main>
+        <button
+          className="book-appointment"
+          onClick={() => this.bookAppointment()}
+        >
           Book appointment
         </button>
-      </main>
+      </div>
     )
   }
 }
