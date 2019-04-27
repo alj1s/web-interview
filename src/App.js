@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import logo from './logo.png'
 import { API_ENDPOINT } from './config'
+import { User } from './components'
 
 import './App.scss'
 
@@ -19,15 +20,20 @@ const appointmentTypes = ['Video', 'Audio']
 class App extends Component {
   constructor(props) {
     super(props)
+    this.userId = 1
 
     this.state = {
-      userId: 1,
       selectedAppointmentType: 'gp',
+      currentUser: {},
       availableSlots: [],
     }
   }
 
   componentDidMount() {
+    fetch(`${API_ENDPOINT}/users/${this.userId}`)
+      .then(res => res.json())
+      .then(json => this.setState({ currentUser: json }))
+
     fetch(`${API_ENDPOINT}/availableSlots`)
       .then(res => res.json())
       .then(json => {
@@ -60,6 +66,8 @@ class App extends Component {
       }
     }
 
+    const { firstName, lastName, avatar } = this.state.currentUser
+
     return (
       <main className="app">
         <header className="app-header">
@@ -68,7 +76,7 @@ class App extends Component {
 
         <h1>New appointment</h1>
 
-        <div>User component</div>
+        <User firstName={firstName} lastName={lastName} avatar={avatar} />
 
         <section>
           <h2>Consultant Type</h2>
