@@ -1,7 +1,14 @@
 import React, { Component } from 'react'
+import { FaStethoscope, FaVideo, FaClock, FaChat } from 'react-icons/fa'
 
 import { API_ENDPOINT } from './config'
-import { Header, SelectButton, User } from './components'
+import {
+  Header,
+  SelectButton,
+  SectionBody,
+  SectionTitle,
+  User,
+} from './components'
 
 import './App.scss'
 
@@ -102,80 +109,96 @@ class App extends Component {
           <User firstName={firstName} lastName={lastName} avatar={avatar} />
 
           <section>
-            <h2>Consultant Type</h2>
-            {consultantTypes.map(consultantType => (
-              <SelectButton
-                key={consultantType}
-                isSelected={
-                  this.state.selectedConsultantType === consultantType
-                }
-                onSelect={() =>
-                  this.setState({
-                    selectedConsultantType: consultantType,
-                    availableSlots: this.calculateAvailableSlots(
-                      consultantType
-                    ),
-                  })
-                }
-              >
-                {consultantType}
-              </SelectButton>
-            ))}
+            <SectionTitle sectionName="Consultant Type">
+              <FaStethoscope size={'1.5rem'} />
+            </SectionTitle>
+            <SectionBody>
+              {consultantTypes.map(consultantType => (
+                <SelectButton
+                  key={consultantType}
+                  isSelected={
+                    this.state.selectedConsultantType === consultantType
+                  }
+                  onSelect={() =>
+                    this.setState({
+                      selectedConsultantType: consultantType,
+                      availableSlots: this.calculateAvailableSlots(
+                        consultantType
+                      ),
+                    })
+                  }
+                >
+                  {consultantType}
+                </SelectButton>
+              ))}
+            </SectionBody>
           </section>
 
           <section>
-            <h2>Date & Time</h2>
-            {this.state.availableSlots.map(slot => (
-              <SelectButton
-                key={slot}
-                isSelected={this.state.selectedAppointmentTime === slot}
-                onSelect={() => {
-                  this.setState({ selectedAppointmentTime: slot })
-                }}
-              >
-                {slot}
-              </SelectButton>
-            ))}
+            <SectionTitle sectionName="Date & Time">
+              <FaClock size={'1.5rem'} />
+            </SectionTitle>
+            <SectionBody>
+              {this.state.availableSlots.map(slot => (
+                <SelectButton
+                  key={slot}
+                  isSelected={this.state.selectedAppointmentTime === slot}
+                  onSelect={() => {
+                    this.setState({ selectedAppointmentTime: slot })
+                  }}
+                >
+                  {slot}
+                </SelectButton>
+              ))}
+            </SectionBody>
           </section>
 
           <section>
-            <h2>Appointment type</h2>
-            {appointmentTypes.map(appointmentType => (
-              <SelectButton
-                key={appointmentType}
-                isSelected={
-                  this.state.selectedAppointmentType === appointmentType
-                }
-                onSelect={() =>
-                  this.setState({ selectedAppointmentType: appointmentType })
-                }
-              >
-                {appointmentType}
-              </SelectButton>
-            ))}
+            <SectionTitle sectionName="Appointment type">
+              <FaVideo size={'1.5rem'} />
+            </SectionTitle>
+            <SectionBody>
+              {appointmentTypes.map(appointmentType => (
+                <SelectButton
+                  key={appointmentType}
+                  isSelected={
+                    this.state.selectedAppointmentType === appointmentType
+                  }
+                  onSelect={() =>
+                    this.setState({ selectedAppointmentType: appointmentType })
+                  }
+                >
+                  {appointmentType}
+                </SelectButton>
+              ))}
+            </SectionBody>
           </section>
 
           <section>
             <h2>Notes</h2>
-            <textarea
-              value={this.state.appointmentNotes}
-              placeholder="Describe your symptoms"
-              onChange={e =>
-                this.setState({ appointmentNotes: e.target.value })
-              }
-            />
+            <SectionBody>
+              <textarea
+                value={this.state.appointmentNotes}
+                placeholder="Describe your symptoms"
+                onChange={e =>
+                  this.setState({ appointmentNotes: e.target.value })
+                }
+              />
+            </SectionBody>
           </section>
 
           <section>
             <h2>Attach a photo</h2>
-            <button className="button">+</button>
+            <SectionBody>
+              <button className="add-photo-button">+</button>
+            </SectionBody>
           </section>
         </main>
         <button
           className="book-appointment"
           onClick={() => this.bookAppointment()}
         >
-          Book appointment
+          Book
         </button>
       </div>
     )
