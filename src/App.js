@@ -34,6 +34,9 @@ class App extends Component {
     fetch(`${API_ENDPOINT}/users/${this.userId}`)
       .then(res => res.json())
       .then(json => this.setState({ currentUser: json }))
+      .catch(() => {
+        // TODO: Handle errors
+      })
 
     fetch(`${API_ENDPOINT}/availableSlots`)
       .then(res => res.json())
@@ -50,16 +53,39 @@ class App extends Component {
       })
   }
 
-  onClick() {
-    this.setState({ selectedAppointmentType: 'gp' })
-  }
-
   calculateAvailableSlots = consultantType =>
     this.allAvailableSlots
       .filter(slot =>
         slot.consultantType.includes(consultantType.toLowerCase())
       )
       .map(slot => slot.time)
+
+  bookAppointment = () => {
+    fetch(`${API_ENDPOINT}/appointments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: this.userId,
+        dateTime: this.state.selectedAppointmentTime,
+        notes: this.state.appointmentNotes,
+        type: `${this.state.selectedConsultantType} appointment`,
+      }),
+    })
+      .then(res => {
+        console.log(res)
+        this.setState({
+          appointmentNotes: '',
+          availableSlots: this.calculateAvailableSlots(
+            this.state.selectedConsultantType
+          ),
+        })
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
   render() {
     const { firstName, lastName, avatar } = this.state.currentUser
@@ -99,7 +125,7 @@ class App extends Component {
               key={slot}
               className="button"
               onClick={() => {
-                this.setState({ selectedAppointment: slot })
+                this.setState({ selectedAppointmentTime: slot })
               }}
             >
               {slot}
@@ -125,6 +151,7 @@ class App extends Component {
         <section>
           <h2>Notes</h2>
           <textarea
+            value={this.state.appointmentNotes}
             placeholder="Describe your symptoms"
             onChange={e => this.setState({ appointmentNotes: e.target.value })}
           />
@@ -135,12 +162,7 @@ class App extends Component {
           <button className="button">+</button>
         </section>
 
-        <button
-          className="button"
-          onClick={() => {
-            /* TODO: submit the data */
-          }}
-        >
+        <button className="button" onClick={() => this.bookAppointment()}>
           Book appointment
         </button>
       </main>
