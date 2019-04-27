@@ -17,11 +17,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    document
-      .querySelectorAll('button')
-      .querySelectorAll('[id=GP-button]')
-      .attachEventHandler('click', this.onClick)
-
     fetch(`${API_ENDPOINT}/availableSlots`)
       .then(res => res.json())
       .then(json => {
@@ -92,6 +87,7 @@ class App extends Component {
             <strong>Appointments</strong>
             {slots.map(slot => (
               <li
+                key={slot}
                 className="appointment-button"
                 onClick={() => {
                   this.setState({ selectedAppointment: slot })
