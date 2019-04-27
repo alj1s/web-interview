@@ -5,6 +5,17 @@ import { API_ENDPOINT } from './config'
 
 import './App.scss'
 
+const consultantTypes = [
+  'GP',
+  'Specialist',
+  'Nurse',
+  'Therapist',
+  'Triage Nurse',
+  'Physio',
+]
+
+const appointmentTypes = ['Video', 'Audio']
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -50,69 +61,82 @@ class App extends Component {
     }
 
     return (
-      <div className="app">
-        <h2 className="h6">New appointment</h2>
-        <div className="app-header">
+      <main className="app">
+        <header className="app-header">
           <img src={logo} className="app-logo" alt="Babylon Health" />
-        </div>
-        <div style={{ maxWidth: 600, margin: '24px auto' }}>
-          <div className="button" id="GP-button">
-            GP
-          </div>
-          <div
-            className="button"
-            onClick={e => {
-              this.setState({ selectedAppointmentType: 'Therapist' })
-            }}
-          >
-            Therapist
-          </div>
-          <div
-            className="button"
-            onClick={e => {
-              this.setState({ selectedAppointmentType: 'Physio' })
-            }}
-          >
-            Physio
-          </div>
-          <div
-            className="button"
-            onClick={e => {
-              this.setState({ selectedAppointmentType: 'specialist' })
-            }}
-          >
-            Specialist
-          </div>
-          <div>
-            <strong>Appointments</strong>
-            {slots.map(slot => (
-              <li
-                key={slot}
-                className="appointment-button"
-                onClick={() => {
-                  this.setState({ selectedAppointment: slot })
-                }}
-              >
-                {slot.time}
-              </li>
-            ))}
-          </div>
-          <div>
-            <strong>Notes</strong>
-            <textarea />
-          </div>
-          <div>
-            <div
+        </header>
+
+        <h1>New appointment</h1>
+
+        <div>User component</div>
+
+        <section>
+          <h2>Consultant Type</h2>
+          {consultantTypes.map(consultantType => (
+            <button
+              key={consultantType}
+              className="button"
+              onClick={() =>
+                this.setState({ selectedConsultantType: consultantType })
+              }
+            >
+              {consultantType}
+            </button>
+          ))}
+        </section>
+
+        <section>
+          <h2>Date & Time</h2>
+          {slots.map(slot => (
+            <button
+              key={slot}
               className="button"
               onClick={() => {
-                /* TODO: submit the data */
+                this.setState({ selectedAppointment: slot })
               }}
             >
-              Book appointment
-            </div>
-          </div>
-        </div>
-      </div>
+              {slot.time}
+            </button>
+          ))}
+        </section>
+
+        <section>
+          <h2>Appointment type</h2>
+          {appointmentTypes.map(appointmentType => (
+            <button
+              key={appointmentType}
+              className="button"
+              onClick={() =>
+                this.setState({ selectedAppointmentType: appointmentType })
+              }
+            >
+              {appointmentType}
+            </button>
+          ))}
+        </section>
+
+        <section>
+          <h2>Notes</h2>
+          <textarea
+            placeholder="Describe your symptoms"
+            onChange={e => this.setState({ appointmentNotes: e.target.value })}
+          />
+        </section>
+
+        <section>
+          <h2>Attach a photo</h2>
+          <button className="button">+</button>
+        </section>
+
+        <button
+          className="button"
+          onClick={() => {
+            /* TODO: submit the data */
+          }}
+        >
+          Book appointment
+        </button>
+      </main>
     )
   }
 }
