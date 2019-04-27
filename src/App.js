@@ -23,7 +23,8 @@ class App extends Component {
     this.userId = 1
 
     this.state = {
-      selectedAppointmentType: 'gp',
+      selectedConsultantType: consultantTypes[0],
+      selectedAppointmentType: appointmentTypes[0],
       currentUser: {},
       availableSlots: [],
     }
@@ -37,7 +38,12 @@ class App extends Component {
     fetch(`${API_ENDPOINT}/availableSlots`)
       .then(res => res.json())
       .then(json => {
-        this.setState({ availableSlots: json })
+        this.allAvailableSlots = json
+        this.setState({
+          availableSlots: this.calculateAvailableSlots(
+            this.state.selectedConsultantType
+          ),
+        })
       })
       .catch(() => {
         // TODO: Handle error here
@@ -48,24 +54,14 @@ class App extends Component {
     this.setState({ selectedAppointmentType: 'gp' })
   }
 
-  render() {
-    // calculate matching slots
-    let slots = []
-    for (let i = 0; i < this.state.availableSlots.length; i++) {
-      for (
-        let j = 0;
-        j < this.state.availableSlots[i]['consultantType'].length;
-        j++
-      ) {
-        if (
-          this.state.availableSlots[j]['consultantType'][i] ===
-          this.state.selectedAppointmentType
-        ) {
-          slots.push(this.state.availableSlots[j])
-        }
-      }
-    }
+  calculateAvailableSlots = consultantType =>
+    this.allAvailableSlots
+      .filter(slot =>
+        slot.consultantType.includes(consultantType.toLowerCase())
+      )
+      .map(slot => slot.time)
 
+  render() {
     const { firstName, lastName, avatar } = this.state.currentUser
 
     return (
@@ -85,7 +81,10 @@ class App extends Component {
               key={consultantType}
               className="button"
               onClick={() =>
-                this.setState({ selectedConsultantType: consultantType })
+                this.setState({
+                  selectedConsultantType: consultantType,
+                  availableSlots: this.calculateAvailableSlots(consultantType),
+                })
               }
             >
               {consultantType}
@@ -95,7 +94,7 @@ class App extends Component {
 
         <section>
           <h2>Date & Time</h2>
-          {slots.map(slot => (
+          {this.state.availableSlots.map(slot => (
             <button
               key={slot}
               className="button"
@@ -103,7 +102,7 @@ class App extends Component {
                 this.setState({ selectedAppointment: slot })
               }}
             >
-              {slot.time}
+              {slot}
             </button>
           ))}
         </section>
