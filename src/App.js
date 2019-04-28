@@ -230,6 +230,7 @@ class App extends Component {
         )}
 
         <button
+          disabled={!this.canBookAppointment()}
           className="book-appointment"
           onClick={() => this.canBookAppointment() && this.bookAppointment()}
         >
