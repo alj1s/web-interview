@@ -57,13 +57,14 @@ class App extends Component {
       })
   }
 
-  calculateAvailableSlots = consultantType =>
-    this.allAvailableSlots
+  calculateAvailableSlots = consultantType => {
+    return this.allAvailableSlots
       .filter(slot =>
         slot.consultantType.includes(consultantType.toLowerCase())
       )
       .map(slot => slot.time)
       .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+  }
 
   canBookAppointment = () => {
     return (
@@ -194,11 +195,14 @@ class App extends Component {
           </section>
 
           <section>
-            <SectionTitle sectionName="Notes">
-              <FaCommentAlt className="section-icon" />
-            </SectionTitle>
+            <label htmlFor="appointment-notes">
+              <SectionTitle sectionName="Notes">
+                <FaCommentAlt className="section-icon" />
+              </SectionTitle>
+            </label>
             <SectionBody>
               <textarea
+                id="appointment-notes"
                 value={this.state.appointmentNotes}
                 placeholder="Describe your symptoms"
                 onChange={e =>
