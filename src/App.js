@@ -24,26 +24,22 @@ import { consultantTypes, appointmentTypes } from './constants'
 class App extends Component {
   constructor(props) {
     super(props)
+
     this.userId = 1
 
     this.state = {
       selectedConsultantType: consultantTypes[0],
       selectedAppointmentType: appointmentTypes[0],
-      currentUser: {},
       availableSlots: [],
     }
   }
 
   componentDidMount() {
-    fetch(`${API_ENDPOINT}/users/${this.userId}`)
-      .then(res => res.json())
-      .then(json => this.setState({ currentUser: json }))
-      .catch(() => {
-        // TODO: Handle errors
-      })
-
     fetch(`${API_ENDPOINT}/availableSlots`)
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) return res.json()
+        else throw Error(res.statusText)
+      })
       .then(json => {
         this.allAvailableSlots = json
         const availableSlots = this.calculateAvailableSlots(
@@ -52,10 +48,12 @@ class App extends Component {
         this.setState({
           availableSlots,
           selectedAppointmentTime: availableSlots[0],
+          slotsError: undefined,
         })
       })
-      .catch(() => {
-        // TODO: Handle error here
+      .catch(error => {
+        console.log(error)
+        this.setState({ slotsError: 'Could not load available slots' })
       })
   }
 
@@ -89,16 +87,22 @@ class App extends Component {
       }),
     })
       .then(res => {
-        console.log(res)
-        this.setState({
-          appointmentNotes: '',
-          availableSlots: this.calculateAvailableSlots(
-            this.state.selectedConsultantType
-          ),
-        })
+        if (res.ok) {
+          this.setState({
+            appointmentNotes: '',
+            availableSlots: this.calculateAvailableSlots(
+              this.state.selectedConsultantType
+            ),
+            bookingError: undefined,
+            bookingComplete: true,
+          })
+        } else {
+          throw new Error(res.statusText)
+        }
       })
       .catch(err => {
         console.error(err)
+        this.setState({ bookingError: 'Booking failed. Please try again' })
       })
   }
 
@@ -112,8 +116,6 @@ class App extends Component {
   }
 
   render() {
-    const { firstName, lastName, avatar } = this.state.currentUser
-
     return (
       <div className="app">
         <Header />
@@ -121,11 +123,11 @@ class App extends Component {
         <main>
           <h1>New Appointment</h1>
 
-          <User firstName={firstName} lastName={lastName} avatar={avatar} />
+          <User userId={this.userId} />
 
           <section>
             <SectionTitle sectionName="Consultant Type">
-              <FaStethoscope size={'1.5rem'} />
+              <FaStethoscope className="section-icon" />
             </SectionTitle>
             <SectionBody>
               {consultantTypes.map(consultantType => (
@@ -145,29 +147,34 @@ class App extends Component {
 
           <section>
             <SectionTitle sectionName="Date & Time">
-              <FaClock size={'1.5rem'} />
+              <FaClock className="section-icon" />
             </SectionTitle>
             <SectionBody>
-              {this.state.availableSlots.map(slot => (
-                <SelectButton
-                  key={slot}
-                  isSelected={this.state.selectedAppointmentTime === slot}
-                  onSelect={() => {
-                    this.setState({ selectedAppointmentTime: slot })
-                  }}
-                >
-                  {format(slot, 'Do MMM HH:mm')}
-                </SelectButton>
-              ))}
-              {this.state.availableSlots.length === 0 && (
-                <p>No slots available</p>
+              {!this.state.slotsError &&
+                this.state.availableSlots.map(slot => (
+                  <SelectButton
+                    key={slot}
+                    isSelected={this.state.selectedAppointmentTime === slot}
+                    onSelect={() => {
+                      this.setState({ selectedAppointmentTime: slot })
+                    }}
+                  >
+                    {format(slot, 'Do MMM HH:mm')}
+                  </SelectButton>
+                ))}
+              {!this.state.slotsError &&
+                this.state.availableSlots.length === 0 && (
+                  <p>No slots available</p>
+                )}
+              {this.state.slotsError && (
+                <p className="error">{this.state.slotsError}</p>
               )}
             </SectionBody>
           </section>
 
           <section>
             <SectionTitle sectionName="Appointment type">
-              <FaVideo size={'1.5rem'} />
+              <FaVideo className="section-icon" />
             </SectionTitle>
             <SectionBody>
               {appointmentTypes.map(appointmentType => (
@@ -188,7 +195,7 @@ class App extends Component {
 
           <section>
             <SectionTitle sectionName="Notes">
-              <FaCommentAlt size={'1.5rem'} />
+              <FaCommentAlt className="section-icon" />
             </SectionTitle>
             <SectionBody>
               <textarea
@@ -203,13 +210,20 @@ class App extends Component {
 
           <section>
             <SectionTitle sectionName="Attach a photo">
-              <FaImages size={'1.5rem'} />
+              <FaImages className="section-icon" />
             </SectionTitle>
             <SectionBody>
               <button className="add-photo-button">+</button>
             </SectionBody>
           </section>
         </main>
+
+        {!!this.state.bookingError && (
+          <p className="error">{this.state.bookingError}</p>
+        )}
+        {!this.state.bookingError && this.state.bookingComplete && (
+          <p className="success">Booking confirmed</p>
+        )}
 
         <button
           disabled={!this.canBookAppointment()}

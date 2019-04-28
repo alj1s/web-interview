@@ -44,6 +44,10 @@ main {
   align-items: center;
 }
 
+.section-icon {
+  font-size: 1.5rem;
+}
+
 .section-title {
   display: flex;
   align-items: center;
@@ -68,6 +72,14 @@ h2,
 p,
 span {
   color: $label-color;
+}
+
+.error {
+  color: $error;
+}
+
+.success {
+  color: $success;
 }
 
 .user {
