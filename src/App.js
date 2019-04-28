@@ -6,6 +6,7 @@ import {
   FaCommentAlt,
   FaImages,
 } from 'react-icons/fa'
+import { format } from 'date-fns'
 
 import { API_ENDPOINT } from './config'
 import {
@@ -155,7 +156,7 @@ class App extends Component {
                     this.setState({ selectedAppointmentTime: slot })
                   }}
                 >
-                  {slot}
+                  {format(slot, 'Do MMM HH:mm')}
                 </SelectButton>
               ))}
               {this.state.availableSlots.length === 0 && (
