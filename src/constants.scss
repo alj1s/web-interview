@@ -1,20 +1,21 @@
 // These constants are used throughout the design and are here to make things easier for you!
 
-$gutter-size: 4px;
+$gutter-size: 0.25rem;
 $gutter-size--large: 2 * $gutter-size;
 $gutter-size--extra-large: 8 * $gutter-size;
 
-$border-radius: 5px;
+$border-radius--small: 0.25rem;
 
 // C O L O R S
-$primary: #7e5ced;
-$primary-dark: #653ee3;
+$primary: #26bdbc;
+$primary-dark: darken($primary, 5%);
 
 $secondary-light: #dfdfdf;
 $secondary: #c5d0de;
 $secondary-dark: #637280;
 $secondary-extra-dark: #333f52;
 
+$button-text: white;
 $label-color: #343a46;
 $outline-dark: #3b4859;
 $focus-border: #319bf5;

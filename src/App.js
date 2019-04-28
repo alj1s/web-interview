@@ -1,5 +1,11 @@
 import React, { Component } from 'react'
-import { FaStethoscope, FaVideo, FaClock, FaChat } from 'react-icons/fa'
+import {
+  FaStethoscope,
+  FaVideo,
+  FaClock,
+  FaCommentAlt,
+  FaImages,
+} from 'react-icons/fa'
 
 import { API_ENDPOINT } from './config'
 import {
@@ -12,16 +18,7 @@ import {
 
 import './App.scss'
 
-const consultantTypes = [
-  'GP',
-  'Specialist',
-  'Nurse',
-  'Therapist',
-  'Triage Nurse',
-  'Physio',
-]
-
-const appointmentTypes = ['Video', 'Audio']
+import { consultantTypes, appointmentTypes } from './constants'
 
 class App extends Component {
   constructor(props) {
@@ -96,6 +93,15 @@ class App extends Component {
       })
   }
 
+  selectConsultantType = consultantType => {
+    const availableSlots = this.calculateAvailableSlots(consultantType)
+    this.setState({
+      availableSlots,
+      selectedAppointmentTime: availableSlots[0],
+      selectedConsultantType: consultantType,
+    })
+  }
+
   render() {
     const { firstName, lastName, avatar } = this.state.currentUser
 
@@ -104,7 +110,7 @@ class App extends Component {
         <Header />
 
         <main>
-          <h1>New appointment</h1>
+          <h1>New Appointment</h1>
 
           <User firstName={firstName} lastName={lastName} avatar={avatar} />
 
@@ -119,18 +125,12 @@ class App extends Component {
                   isSelected={
                     this.state.selectedConsultantType === consultantType
                   }
-                  onSelect={() =>
-                    this.setState({
-                      selectedConsultantType: consultantType,
-                      availableSlots: this.calculateAvailableSlots(
-                        consultantType
-                      ),
-                    })
-                  }
+                  onSelect={() => this.selectConsultantType(consultantType)}
                 >
                   {consultantType}
                 </SelectButton>
               ))}
+              <p>{'Babylon ' + this.state.selectedConsultantType}</p>
             </SectionBody>
           </section>
 
@@ -175,7 +175,9 @@ class App extends Component {
           </section>
 
           <section>
-            <h2>Notes</h2>
+            <SectionTitle sectionName="Notes">
+              <FaCommentAlt size={'1.5rem'} />
+            </SectionTitle>
             <SectionBody>
               <textarea
                 value={this.state.appointmentNotes}
@@ -188,12 +190,15 @@ class App extends Component {
           </section>
 
           <section>
-            <h2>Attach a photo</h2>
+            <SectionTitle sectionName="Attach a photo">
+              <FaImages size={'1.5rem'} />
+            </SectionTitle>
             <SectionBody>
               <button className="add-photo-button">+</button>
             </SectionBody>
           </section>
         </main>
+
         <button
           className="book-appointment"
           onClick={() => this.bookAppointment()}

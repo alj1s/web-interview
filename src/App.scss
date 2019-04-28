@@ -18,9 +18,15 @@
   }
 
   .icon {
-    background: grey;
+    background: $secondary-dark;
     color: white;
-    border-radius: 1.25rem;
+    border-radius: 50%;
+    padding: 1.3rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   border-bottom: $border-standard;
@@ -55,6 +61,13 @@ article,
 section,
 h1 {
   padding: $gutter-size--large;
+}
+
+h1,
+h2,
+p,
+span {
+  color: $label-color;
 }
 
 .user {
@@ -100,8 +113,9 @@ h2 {
 .select-button {
   background: transparent;
   border-radius: 1.25rem;
-  border: $border-standard;
-  color: $outline-dark;
+  border: solid 1px $secondary;
+  color: $secondary-dark;
+  cursor: pointer;
   font-weight: 500;
   height: 2.5rem;
   margin-bottom: 0.5rem;
@@ -109,14 +123,42 @@ h2 {
   min-width: 5rem;
   padding: 0.3rem 0.8rem;
   text-align: center;
+  user-select: none;
+
+  &:hover {
+    background-color: $primary-dark;
+    color: $button-text;
+    transition: all ease-in 0.3s;
+  }
 
   &.selected {
-    background-color: $primary-dark;
-    color: $secondary-light;
+    background-color: $primary;
+    border: none;
+    color: $button-text;
     &:hover {
-      background-color: darken($primary-dark, 10%);
+      background-color: $primary-dark;
       transition: all ease-in 0.3s;
     }
+  }
+}
+
+.book-appointment {
+  align-self: stretch;
+  background-color: $primary;
+  border-radius: $border-radius--small;
+  color: $button-text;
+  cursor: pointer;
+  font-weight: 500;
+  height: 2.5rem;
+  margin: 1.5rem auto;
+  padding: 0.3rem 0.8rem;
+  text-align: center;
+  user-select: none;
+  width: 80%;
+  &:hover {
+    background-color: $primary-dark;
+    color: $button-text;
+    transition: all ease-in 0.3s;
   }
 }
 
@@ -132,23 +174,9 @@ h2 {
 }
 
 textarea {
-  border-radius: $border-radius;
+  border-radius: $border-radius--small;
   border: $border-standard;
   padding: $gutter-size--large;
   width: 100%;
   height: 10rem;
-}
-
-.book-appointment {
-  align-self: stretch;
-  background-color: $primary-dark;
-  border-radius: $border-radius;
-  color: $secondary-light;
-  display: inline-block;
-  font-weight: 500;
-  height: 42px;
-  margin: 1.5rem auto;
-  padding: 12px;
-  text-align: center;
-  width: 80%;
 }

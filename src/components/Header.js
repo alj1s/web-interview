@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { FaBars } from 'react-icons/fa'
 
 import logo from '../logo.png'
@@ -13,5 +12,7 @@ function Header(props) {
     </header>
   )
 }
+
+Header.propTypes = {}
 
 export default Header
