@@ -160,6 +160,11 @@ h2 {
     color: $button-text;
     transition: all ease-in 0.3s;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: lighten($primary, 10%);
+  }
 }
 
 .add-photo-button {

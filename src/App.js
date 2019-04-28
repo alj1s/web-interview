@@ -66,6 +66,14 @@ class App extends Component {
       .map(slot => slot.time)
       .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
 
+  canBookAppointment = () => {
+    return (
+      !!this.state.selectedConsultantType &&
+      !!this.state.selectedAppointmentType &&
+      !!this.state.selectedAppointmentTime
+    )
+  }
+
   bookAppointment = () => {
     fetch(`${API_ENDPOINT}/appointments`, {
       method: 'POST',
@@ -150,6 +158,9 @@ class App extends Component {
                   {slot}
                 </SelectButton>
               ))}
+              {this.state.availableSlots.length === 0 && (
+                <p>No slots available</p>
+              )}
             </SectionBody>
           </section>
 
@@ -200,8 +211,9 @@ class App extends Component {
         </main>
 
         <button
+          disabled={!this.canBookAppointment()}
           className="book-appointment"
-          onClick={() => this.bookAppointment()}
+          onClick={() => this.canBookAppointment() && this.bookAppointment()}
         >
           Book
         </button>
